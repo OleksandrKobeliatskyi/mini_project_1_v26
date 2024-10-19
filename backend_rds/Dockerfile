@@ -7,6 +7,9 @@ WORKDIR /app
 # Копируем все файлы проекта в контейнер
 COPY . /app
 
+# Устанавливаем зависимости для PostgreSQL
+RUN apt-get update && apt-get install -y libpq-dev gcc
+
 # Устанавливаем зависимости из requirements.txt
 RUN pip install -r requirements.txt
 
