@@ -1,0 +1,50 @@
+
+services:
+  # Сервис PostgreSQL для backend_rds
+  postgres:
+    image: postgres:13
+    environment:
+     # POSTGRES_USER=${DB_USER}
+     # POSTGRES_PASSWORD=${DB_PASSWORD}
+     # POSTGRES_DB=${DB_NAME}
+     # POSTGRES_PORT=${DB_PORT}
+     # POSTGRES_HOST=${DB_HOST}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Redis сервис для backend_redis
+  redis:
+    image: redis:alpine
+    environment:
+      REDIS_URL: "redis://${REDIS_PASSWORD}@${REDIS_HOST}:${REDIS_PORT}/${REDIS_DB}"
+    
+
+  # Backend RDS
+  backend_rds:
+    build:
+      context: ./backend_rds
+      dockerfile: Dockerfile
+    env_file: 
+      .env
+    ports:
+      - "8001:8001"  # Экспонируем на другом порту, чтобы избежать конфликта с backend_redis
+    depends_on:
+      - postgres
+
+  # Backend Redis
+  backend_redis:
+    build:
+      context: ./backend_redis
+      dockerfile: Dockerfile
+    env_file:
+     .env  # Подключение .env файла
+    ports:
+      - "8000:8000"  # Экспонируем на 8000 для этого сервиса
+    depends_on:
+      - redis
+
+volumes:
+  postgres_data:
