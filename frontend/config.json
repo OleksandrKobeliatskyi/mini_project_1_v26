@@ -1,5 +1,5 @@
 {
-    "BACKEND_RDS_URL": "http://51.17.62.242:8001/test_connection",
-    "BACKEND_REDIS_URL": "http://51.17.62.242:8000/test_connection"
+    "BACKEND_RDS_URL": "http://51.17.8.128:8001/test_connection",
+    "BACKEND_REDIS_URL": "http://51.17.8.128:8000/test_connection"
   }
   
