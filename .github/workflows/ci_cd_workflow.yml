@@ -35,7 +35,11 @@ jobs:
 
       # Step 4: Deploy to AWS EC2
       - name: Deploy to AWS EC2
+        env:
+          SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
         run: |
-          scp -i "C:\Users\kobel\Desktop\Course\mini-project-1-v-26.pem" docker-compose.yml ec2-user@51.17.222.95:/home/ec2-user/mini_project_1_v26/
-          ssh -i "C:\Users\kobel\Desktop\Course\mini-project-1-v-26.pem" ec2-user@51.17.222.95 "cd /home/ec2-user/mini_project_1_v26 && docker-compose down && docker-compose up -d"
-          # Копирование файла docker-compose.yml на EC2 и перезапуск Docker-контейнеров для обновления приложения.
+          echo "$SSH_KEY" > ssh_key.pem
+          chmod 400 ssh_key.pem
+          scp -i "ssh_key.pem" docker-compose.yml ec2-user@51.17.222.95:/home/ec2-user/mini_project_1_v26/
+          ssh -i "ssh_key.pem" ec2-user@51.17.222.95 "cd /home/ec2-user/mini_project_1_v26 && docker-compose down && docker-compose up -d"
+    # Копирование файла docker-compose.yml на EC2 и перезапуск Docker-контейнеров для обновления приложения.
