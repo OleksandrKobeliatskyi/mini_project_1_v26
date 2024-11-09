@@ -24,13 +24,13 @@ jobs:
       # Step 2: Build Docker image for backend_rds
       - name: Build Docker Image for Backend RDS
         run: |
-          docker build -t mini_project_backend_rds -f backend_rds/Dockerfile .
+          docker build -t mini_project_backend_rds -f backend_rds/Dockerfile backend_rds
           # Сборка Docker-образа с тегом "mini_project_backend_rds" из Dockerfile в папке backend_rds.
 
       # Step 3: Build Docker image for backend_redis
       - name: Build Docker Image for Backend Redis
         run: |
-          docker build -t mini_project_backend_redis -f backend_redis/Dockerfile .
+          docker build -t mini_project_backend_redis -f backend_redis/Dockerfile backend_redis
           # Сборка Docker-образа с тегом "mini_project_backend_redis" из Dockerfile в папке backend_redis.
 
       # Step 4: Deploy to AWS EC2
@@ -39,4 +39,3 @@ jobs:
           scp -i "C:\Users\kobel\Desktop\Course\mini-project-1-v-26.pem" docker-compose.yml ec2-user@51.17.222.95:/home/ec2-user/mini_project_1_v26/
           ssh -i "C:\Users\kobel\Desktop\Course\mini-project-1-v-26.pem" ec2-user@51.17.222.95 "cd /home/ec2-user/mini_project_1_v26 && docker-compose down && docker-compose up -d"
           # Копирование файла docker-compose.yml на EC2 и перезапуск Docker-контейнеров для обновления приложения.
-
