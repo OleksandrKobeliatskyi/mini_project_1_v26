@@ -1,0 +1,61 @@
+name: CI/CD Workflow for Mini Project 1
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_BUILDKIT: 1
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        # Эта строка берёт исходный код из репозитория GitHub.
+
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+          # Настройка Python среды с версией 3.9.
+
+      # Step 3: Install dependencies
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          # Установка всех зависимостей, указанных в файле requirements.txt.
+
+      # Step 4: Lint and Test
+      - name: Run Lint and Tests
+        run: |
+          flake8 .
+          pytest
+          # Запуск анализа кода с flake8 и запуск тестов с pytest.
+
+      # Step 5: Set up Docker Buildx (to use multi-platform build)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        # Настройка Docker Buildx для поддержки многоплатформенной сборки контейнеров.
+
+      # Step 6: Build Docker image
+      - name: Build Docker Image
+        run: |
+          docker build -t mini_project_backend .
+          # Сборка Docker-образа с тегом "mini_project_backend".
+
+      # Step 7: Deploy to AWS EC2
+      - name: Deploy to AWS EC2
+        run: |
+          scp -i "C:\Users\kobel\Desktop\Course\mini-project-1-v-26.pem" docker-compose.yml ec2-user@51.17.222.95:/home/ec2-user/mini_project_1_v26/
+          ssh -i "C:\Users\kobel\Desktop\Course\mini-project-1-v-26.pem" ec2-user@51.17.222.95 "cd /home/ec2-user/mini_project_1_v26 && docker-compose down && docker-compose up -d"
+          # Копирование файла docker-compose.yml на EC2 и перезапуск Docker-контейнеров для обновления приложения.
